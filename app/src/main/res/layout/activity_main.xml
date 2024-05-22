@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <!-- Background Image -->
+
+    <!-- Monster Health Bar -->
+    <ImageView
+        android:id="@+id/background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitXY"
+        android:src="@drawable/background" />
+
+    <ProgressBar
+        android:id="@+id/monsterHealthBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="40dp"
+        android:max="100"
+        android:progress="100"
+        android:progressTint="@color/progress_bar_color" />
+
+    <!-- Monster Image -->
+    <ImageView
+        android:id="@+id/monsterImage"
+        android:layout_width="339dp"
+        android:layout_height="380dp"
+        android:layout_below="@id/monsterHealthBar"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:src="@drawable/monster1" />
+
+    <!-- Coin Text View -->
+    <TextView
+        android:id="@+id/coinTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Coins: 0"
+        android:textSize="18sp"
+        android:textColor="#000"
+        android:layout_below="@id/monsterImage"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp" />
+
+    <!-- Hunger Text View -->
+    <TextView
+        android:id="@+id/hungerTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hunger: 100"
+        android:textSize="18sp"
+        android:textColor="#000"
+        android:layout_below="@id/coinTextView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp" />
+
+    <!-- Thirst Text View -->
+    <TextView
+        android:id="@+id/thirstTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Thirst: 100"
+        android:textSize="18sp"
+        android:textColor="#000"
+        android:layout_below="@id/hungerTextView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp" />
+
+    <!-- Menu Button -->
+
+
+    <!-- Shop Button -->
+    <ImageView
+        android:id="@+id/shopButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/thirstTextView"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="126dp"
+        android:layout_marginEnd="16dp"
+        android:src="@drawable/shopbutton" />
+
+</RelativeLayout>
