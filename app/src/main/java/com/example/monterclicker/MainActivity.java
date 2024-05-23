@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Typeface;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.View;
@@ -14,6 +15,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.res.ResourcesCompat;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -22,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView coinTextView;
     private TextView hungerTextView;
     private TextView thirstTextView;
+    private TextView attackIndicatorTextView;
     private int monsterHealth = 100; // Initial monster health
     private int currentMonster = 1;
     private int coins;
@@ -41,8 +44,16 @@ public class MainActivity extends AppCompatActivity {
         coinTextView = findViewById(R.id.coinTextView);
         hungerTextView = findViewById(R.id.hungerTextView);
         thirstTextView = findViewById(R.id.thirstTextView);
+        attackIndicatorTextView = findViewById(R.id.attackIndicatorTextView);
 
         ImageView shopButton = findViewById(R.id.shopButton);
+
+        // Load pixelated font
+        Typeface pixelFont = ResourcesCompat.getFont(this, R.font.pixelated_font);
+        coinTextView.setTypeface(pixelFont);
+        hungerTextView.setTypeface(pixelFont);
+        thirstTextView.setTypeface(pixelFont);
+        attackIndicatorTextView.setTypeface(pixelFont);
 
         DBHelper dbHelper = new DBHelper(this);
         db = dbHelper.getWritableDatabase();
@@ -65,24 +76,19 @@ public class MainActivity extends AppCompatActivity {
         monsterImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (hunger > 0 && thirst > 0) { // Check if hunger and thirst are greater than zero
-                    monsterImage.startAnimation(shrinkAnimation); // Start the animation
-                    monsterHealth -= 10; // Decrease health by 10 on each click
-                    addCoins(1);
-                    if (monsterHealth <= 0) {
-                        playMonsterDieSound();
-                        spawnNextMonster();
-                        addCoins(20); // Example: add 10 coins for defeating a monster
-                    }
-                    updateMonsterHealthBar();
-                    updateHungerThirst(); // Decrease hunger and thirst with each click
-                } else {
-                    // Inform the user that they cannot click the monster due to hunger or thirst being zero
-                    Toast.makeText(MainActivity.this, "Cannot click the monster. Hunger or thirst is zero.", Toast.LENGTH_SHORT).show();
+                monsterImage.startAnimation(shrinkAnimation); // Start the animation
+                monsterHealth -= 10; // Decrease health by 10 on each click
+                addCoins(10); // Base amount is 5 coins
+                if (monsterHealth <= 0) {
+                    playMonsterDieSound();
+                    spawnNextMonster();
+                    addCoins(20); // Example: add 20 coins for defeating a monster
                 }
+                updateMonsterHealthBar();
+                updateHungerThirst(); // Decrease hunger and thirst with each click
+                updateAttackIndicator();
             }
         });
-
 
         shopButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -144,8 +150,12 @@ public class MainActivity extends AppCompatActivity {
         cursor.close();
     }
 
-    private void addCoins(int amount) {
-        coins += amount;
+    private void addCoins(int baseAmount) {
+        int finalAmount = baseAmount;
+        if (hunger == 0 || thirst == 0) {
+            finalAmount = (int) (baseAmount * 0.10); // Reduce coins by 50% if hunger or thirst is zero
+        }
+        coins += finalAmount;
         ContentValues values = new ContentValues();
         values.put("coins", coins);
         db.update("user", values, "id = 1", null);
@@ -153,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateCoinText() {
-        coinTextView.setText("Coins: " + coins);
+        coinTextView.setText(String.valueOf(coins));
     }
 
     private void updateMonsterHealthBar() {
@@ -165,11 +175,20 @@ public class MainActivity extends AppCompatActivity {
         thirst -= 1;
         if (hunger <= 0) hunger = 0;
         if (thirst <= 0) thirst = 0;
-        hungerTextView.setText("Hunger: " + hunger);
-        thirstTextView.setText("Thirst: " + thirst);
+        hungerTextView.setText(String.valueOf(hunger));
+        thirstTextView.setText(String.valueOf(thirst));
 
         // Update hunger and thirst values in the database
         DBHelper dbHelper = new DBHelper(this);
         dbHelper.updateHungerThirst(hunger, thirst);
+    }
+
+    private void updateAttackIndicator() {
+        if (hunger == 0 || thirst == 0) {
+            attackIndicatorTextView.setText("Attack Weakened!");
+            attackIndicatorTextView.setVisibility(View.VISIBLE);
+        } else {
+            attackIndicatorTextView.setVisibility(View.INVISIBLE);
+        }
     }
 }

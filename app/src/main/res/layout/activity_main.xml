@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -6,8 +5,6 @@
     tools:context=".MainActivity">
 
     <!-- Background Image -->
-
-    <!-- Monster Health Bar -->
     <ImageView
         android:id="@+id/background"
         android:layout_width="match_parent"
@@ -15,6 +12,7 @@
         android:scaleType="fitXY"
         android:src="@drawable/background" />
 
+    <!-- Monster Health Bar -->
     <ProgressBar
         android:id="@+id/monsterHealthBar"
         style="?android:attr/progressBarStyleHorizontal"
@@ -27,64 +25,106 @@
         android:progress="100"
         android:progressTint="@color/progress_bar_color" />
 
+    <!-- Stats Container -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/monsterHealthBar"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal"
+        android:gravity="center_horizontal">
+
+        <!-- Coin Icon and Text View -->
+        <ImageView
+            android:id="@+id/coinIcon"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/coin" />
+
+        <TextView
+            android:id="@+id/coinTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:textSize="18sp"
+            android:textColor="#000"
+            android:layout_marginStart="8dp"
+            android:fontFamily="@font/pixelated_font" />
+
+        <!-- Spacer -->
+        <View
+            android:layout_width="32dp"
+            android:layout_height="32dp" />
+
+        <!-- Hunger Icon and Text View -->
+        <ImageView
+            android:id="@+id/hungerIcon"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/hunger" />
+
+        <TextView
+            android:id="@+id/hungerTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="100"
+            android:textSize="18sp"
+            android:textColor="#000"
+            android:layout_marginStart="8dp"
+            android:fontFamily="@font/pixelated_font" />
+
+        <!-- Spacer -->
+        <View
+            android:layout_width="32dp"
+            android:layout_height="32dp" />
+
+        <!-- Thirst Icon and Text View -->
+        <ImageView
+            android:id="@+id/thirstIcon"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/thirst" />
+
+        <TextView
+            android:id="@+id/thirstTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="100"
+            android:textSize="18sp"
+            android:textColor="#000"
+            android:layout_marginStart="8dp"
+            android:fontFamily="@font/pixelated_font" />
+    </LinearLayout>
+
+    <!-- Attack Indicator -->
+    <TextView
+        android:id="@+id/attackIndicatorTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Attack Weakened!"
+        android:textSize="18sp"
+        android:textColor="#FF0000"
+        android:layout_below="@id/monsterHealthBar"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="60dp"
+        android:visibility="invisible"
+        android:fontFamily="@font/pixelated_font" />
+
     <!-- Monster Image -->
     <ImageView
         android:id="@+id/monsterImage"
         android:layout_width="339dp"
         android:layout_height="380dp"
-        android:layout_below="@id/monsterHealthBar"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"
+        android:layout_centerInParent="true"
         android:src="@drawable/monster1" />
-
-    <!-- Coin Text View -->
-    <TextView
-        android:id="@+id/coinTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Coins: 0"
-        android:textSize="18sp"
-        android:textColor="#000"
-        android:layout_below="@id/monsterImage"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp" />
-
-    <!-- Hunger Text View -->
-    <TextView
-        android:id="@+id/hungerTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hunger: 100"
-        android:textSize="18sp"
-        android:textColor="#000"
-        android:layout_below="@id/coinTextView"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp" />
-
-    <!-- Thirst Text View -->
-    <TextView
-        android:id="@+id/thirstTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Thirst: 100"
-        android:textSize="18sp"
-        android:textColor="#000"
-        android:layout_below="@id/hungerTextView"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp" />
-
-    <!-- Menu Button -->
-
 
     <!-- Shop Button -->
     <ImageView
         android:id="@+id/shopButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/thirstTextView"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="126dp"
-        android:layout_marginEnd="16dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="16dp"
         android:src="@drawable/shopbutton" />
-
 </RelativeLayout>
