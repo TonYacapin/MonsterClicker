@@ -1,6 +1,8 @@
 package com.example.monterclicker;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -20,7 +22,8 @@ public class DBHelper extends SQLiteOpenHelper {
                 "id INTEGER PRIMARY KEY, " +
                 "coins INTEGER, " +
                 "hunger INTEGER, " +
-                "thirst INTEGER)");
+                "thirst INTEGER, " +
+                "damage INTEGER)");
 
         // Create items table
         db.execSQL("CREATE TABLE items (" +
@@ -44,11 +47,10 @@ public class DBHelper extends SQLiteOpenHelper {
                 "new_power INTEGER)");
 
         // Insert initial data into user table
-        db.execSQL("INSERT INTO user (id, coins, hunger, thirst) VALUES (1, 0, 100, 100)");
+        db.execSQL("INSERT INTO user (id, coins, hunger, thirst, damage) VALUES (1, 0, 100, 100, 10)");
 
         // Insert initial data into items table
-        db.execSQL("INSERT INTO items (name, cost, type) VALUES ('Sword', 100, 'weapon_upgrade')");
-        db.execSQL("INSERT INTO items (name, cost, type) VALUES ('Shield', 150, 'weapon_upgrade')");
+        db.execSQL("INSERT INTO items (name, cost, type) VALUES ('Sword', 100, 'weapon_upgrade')");;
         db.execSQL("INSERT INTO items (name, cost, type) VALUES ('Food', 50, 'food')");
         db.execSQL("INSERT INTO items (name, cost, type) VALUES ('Water', 30, 'water')");
 
@@ -69,16 +71,58 @@ public class DBHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    // Method to upgrade a weapon
-    public void upgradeWeapon(int weaponId, int newLevel, int newPower, int cost) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL("UPDATE weapons SET level = ?, power = ? WHERE id = ?", new Object[]{newLevel, newPower, weaponId});
-        db.execSQL("UPDATE user SET coins = coins - ? WHERE id = 1", new Object[]{cost});
+    public int getWeaponPower(int weaponId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT power FROM weapons WHERE id = ?", new String[]{String.valueOf(weaponId)});
+        int power = 0;
+        if (cursor != null && cursor.moveToFirst()) {
+            power = cursor.getInt(cursor.getColumnIndexOrThrow("power"));
+            cursor.close();
+        }
+        return power;
     }
 
-    // Method to update hunger and thirst levels
+    public WeaponUpgrade getWeaponUpgrade() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT cost, new_level, new_power FROM weapon_upgrades WHERE id = 1", null);
+        WeaponUpgrade upgrade = null;
+        if (cursor != null && cursor.moveToFirst()) {
+            int cost = cursor.getInt(cursor.getColumnIndexOrThrow("cost"));
+            int newLevel = cursor.getInt(cursor.getColumnIndexOrThrow("new_level"));
+            int newPower = cursor.getInt(cursor.getColumnIndexOrThrow("new_power"));
+            upgrade = new WeaponUpgrade(1, cost, newLevel, newPower); // Assuming WeaponUpgrade constructor requires an ID
+            cursor.close();
+        }
+        return upgrade;
+    }
+
+    public void upgradeWeapon(int newPower) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("power", newPower);
+        db.update("weapons", values, "id = 1", null); // Assuming the weapon ID is always 1
+    }
+
     public void updateHungerThirst(int hunger, int thirst) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("UPDATE user SET hunger = ?, thirst = ? WHERE id = 1", new Object[]{hunger, thirst});
+    }
+
+    public void updateUserDamage(int newDamage) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("damage", newDamage);
+        db.update("user", values, "id = ?", new String[]{String.valueOf(1)});
+    }
+
+    public int getUserDamage() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT damage FROM user WHERE id = 1", null);
+        int damage = 0;
+        if (cursor != null && cursor.moveToFirst()) {
+            damage = cursor.getInt(cursor.getColumnIndexOrThrow("damage"));
+            cursor.close();
+        }
+        return damage;
     }
 }

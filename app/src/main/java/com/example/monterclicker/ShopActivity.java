@@ -1,7 +1,6 @@
 package com.example.monterclicker;
 
 import android.content.ContentValues;
-import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -11,9 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,10 +20,15 @@ public class ShopActivity extends AppCompatActivity {
     private TextView coinTextView;
     private TextView hungerTextView;
     private TextView thirstTextView;
+    private TextView damageIndicatorTextView; // Ensure this is properly declared in your layout XML
+
     private SQLiteDatabase db;
     private int userCoins;
     private int hunger;
     private int thirst;
+    private int damage;
+
+    private DBHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,8 +39,9 @@ public class ShopActivity extends AppCompatActivity {
         coinTextView = findViewById(R.id.coinTextView);
         hungerTextView = findViewById(R.id.hungerTextView);
         thirstTextView = findViewById(R.id.thirstTextView);
+        damageIndicatorTextView = findViewById(R.id.damageIndicatorTextView); // Make sure this is properly declared in your layout XML
 
-        DBHelper dbHelper = new DBHelper(this);
+        dbHelper = new DBHelper(this);
         db = dbHelper.getWritableDatabase();
 
         loadUserData();
@@ -54,41 +57,23 @@ public class ShopActivity extends AppCompatActivity {
                 String itemName = parts[0];
                 int itemCost = Integer.parseInt(parts[1].replaceAll("[\\D]", "")); // Extract cost from string
 
-                // Check if the user has enough coins to buy the item
-                if (userCoins >= itemCost) {
-                    // Subtract item cost from user's coins
-                    userCoins -= itemCost;
-
-                    // Adjust hunger and thirst if necessary
-                    if (itemName.equals("Food")) {
-                        hunger += 20; // Example: Increase hunger by 20 when food is purchased
-                        updateUserData(userCoins, hunger, thirst);
-                        loadUserData(); // Refresh user data after updating hunger
-                    } else if (itemName.equals("Water")) {
-                        thirst += 20; // Example: Increase thirst by 20 when water is purchased
-                        updateUserData(userCoins, hunger, thirst);
-                        loadUserData(); // Refresh user data after updating thirst
-                    }
-
-                    // Display a toast message to indicate successful purchase
-                    Toast.makeText(ShopActivity.this, "You bought " + itemName, Toast.LENGTH_SHORT).show();
-                } else {
-                    // Display a toast message indicating insufficient funds
-                    Toast.makeText(ShopActivity.this, "Not enough coins to buy " + itemName, Toast.LENGTH_SHORT).show();
-                }
+                // Handle the purchase of the selected item
+                handleItemPurchase(itemName, itemCost);
             }
         });
     }
 
     private void loadUserData() {
-        Cursor cursor = db.rawQuery("SELECT coins, hunger, thirst FROM user WHERE id = 1", null);
+        Cursor cursor = db.rawQuery("SELECT coins, hunger, thirst, damage FROM user WHERE id = 1", null);
         if (cursor.moveToFirst()) {
             userCoins = cursor.getInt(cursor.getColumnIndexOrThrow("coins"));
             hunger = cursor.getInt(cursor.getColumnIndexOrThrow("hunger"));
             thirst = cursor.getInt(cursor.getColumnIndexOrThrow("thirst"));
+            damage = cursor.getInt(cursor.getColumnIndexOrThrow("damage"));
             coinTextView.setText("Coins: " + userCoins);
             hungerTextView.setText("Hunger: " + hunger);
             thirstTextView.setText("Thirst: " + thirst);
+            damageIndicatorTextView.setText("Damage: " + damage);
         }
         cursor.close();
     }
@@ -108,11 +93,41 @@ public class ShopActivity extends AppCompatActivity {
         shopListView.setAdapter(adapter);
     }
 
-    private void updateUserData(int coins, int hunger, int thirst) {
+    private void handleItemPurchase(String itemName, int itemCost) {
+        // Check if the user has enough coins to buy the item
+        if (userCoins >= itemCost) {
+            // Subtract item cost from user's coins
+            userCoins -= itemCost;
+
+            // Adjust hunger and thirst if necessary
+            if (itemName.equals("Food")) {
+                hunger += 20; // Example: Increase hunger by 20 when food is purchased
+            } else if (itemName.equals("Water")) {
+                thirst += 20; // Example: Increase thirst by 20 when water is purchased
+            } else if (itemName.equals("Sword")) {
+                // Increase damage when a sword is purchased
+                damage += 5; // Example: Increase damage by 10 when sword is purchased
+            }
+
+            // Update user data in the database and UI
+            updateUserData(userCoins, hunger, thirst, damage);
+            loadUserData(); // Refresh user data after updating hunger, thirst, or coins
+
+            // Display a toast message to indicate successful purchase
+            Toast.makeText(ShopActivity.this, "You bought " + itemName, Toast.LENGTH_SHORT).show();
+        } else {
+            // Display a toast message indicating insufficient funds
+            Toast.makeText(ShopActivity.this, "Not enough coins to buy " + itemName, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void updateUserData(int coins, int hunger, int thirst, int damage) {
         ContentValues values = new ContentValues();
         values.put("coins", coins);
         values.put("hunger", hunger);
         values.put("thirst", thirst);
+        values.put("damage", damage);
         db.update("user", values, "id = 1", null);
     }
 }
+

@@ -5,6 +5,8 @@
     tools:context=".MainActivity">
 
     <!-- Background Image -->
+
+    <!-- Monster Health Bar -->
     <ImageView
         android:id="@+id/background"
         android:layout_width="match_parent"
@@ -12,7 +14,6 @@
         android:scaleType="fitXY"
         android:src="@drawable/background" />
 
-    <!-- Monster Health Bar -->
     <ProgressBar
         android:id="@+id/monsterHealthBar"
         style="?android:attr/progressBarStyleHorizontal"
@@ -94,7 +95,27 @@
             android:textColor="#000"
             android:layout_marginStart="8dp"
             android:fontFamily="@font/pixelated_font" />
+
+        <!-- Damage Indicator Image -->
+        <ImageView
+            android:id="@+id/damageIndicatorImageView"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/weapon"
+            android:layout_marginStart="8dp" />
+
+        <!-- Damage Indicator Text -->
+        <TextView
+            android:id="@+id/damageIndicatorTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:textSize="18sp"
+            android:textColor="#000"
+            android:layout_marginStart="8dp"
+            android:fontFamily="@font/pixelated_font" />
     </LinearLayout>
+
 
     <!-- Attack Indicator -->
     <TextView
@@ -115,16 +136,20 @@
         android:id="@+id/monsterImage"
         android:layout_width="339dp"
         android:layout_height="380dp"
-        android:layout_centerInParent="true"
+        android:layout_below="@id/attackIndicatorTextView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="200dp"
         android:src="@drawable/monster1" />
+
 
     <!-- Shop Button -->
     <ImageView
         android:id="@+id/shopButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="16dp"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="60dp"
+        android:layout_marginEnd="16dp"
         android:src="@drawable/shopbutton" />
 </RelativeLayout>
