@@ -85,13 +85,22 @@ public class ShopActivity extends AppCompatActivity {
         while (cursor.moveToNext()) {
             String itemName = cursor.getString(cursor.getColumnIndexOrThrow("name"));
             int itemCost = cursor.getInt(cursor.getColumnIndexOrThrow("cost"));
-            shopItemList.add(itemName + " - " + itemCost + " gold");
+
+            // Create description based on item name
+
+            // Append description to item name
+            String itemDetails = itemName + " - " + itemCost + " gold";
+
+            shopItemList.add(itemDetails);
         }
         cursor.close();
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, shopItemList);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.list_item_shop, shopItemList);
         shopListView.setAdapter(adapter);
     }
+
+
+
 
     private void handleItemPurchase(String itemName, int itemCost) {
         // Check if the user has enough coins to buy the item
@@ -106,7 +115,7 @@ public class ShopActivity extends AppCompatActivity {
                 thirst += 20; // Example: Increase thirst by 20 when water is purchased
             } else if (itemName.equals("Sword")) {
                 // Increase damage when a sword is purchased
-                damage += 5; // Example: Increase damage by 10 when sword is purchased
+                damage += 10; // Example: Increase damage by 10 when sword is purchased
             }
 
             // Update user data in the database and UI
@@ -114,12 +123,13 @@ public class ShopActivity extends AppCompatActivity {
             loadUserData(); // Refresh user data after updating hunger, thirst, or coins
 
             // Display a toast message to indicate successful purchase
-            Toast.makeText(ShopActivity.this, "You bought " + itemName, Toast.LENGTH_SHORT).show();
+
         } else {
             // Display a toast message indicating insufficient funds
-            Toast.makeText(ShopActivity.this, "Not enough coins to buy " + itemName, Toast.LENGTH_SHORT).show();
+
         }
     }
+
 
     private void updateUserData(int coins, int hunger, int thirst, int damage) {
         ContentValues values = new ContentValues();

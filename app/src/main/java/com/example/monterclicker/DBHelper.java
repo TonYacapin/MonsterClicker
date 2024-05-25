@@ -50,7 +50,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("INSERT INTO user (id, coins, hunger, thirst, damage) VALUES (1, 0, 100, 100, 10)");
 
         // Insert initial data into items table
-        db.execSQL("INSERT INTO items (name, cost, type) VALUES ('Sword', 100, 'weapon_upgrade')");;
+        db.execSQL("INSERT INTO items (name, cost, type) VALUES ('Sword', 10000, 'weapon_upgrade')");;
         db.execSQL("INSERT INTO items (name, cost, type) VALUES ('Food', 50, 'food')");
         db.execSQL("INSERT INTO items (name, cost, type) VALUES ('Water', 30, 'water')");
 
@@ -58,7 +58,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("INSERT INTO weapons (id, level, power) VALUES (1, 1, 10)");
 
         // Insert initial data into weapon upgrades table
-        db.execSQL("INSERT INTO weapon_upgrades (weapon_id, cost, new_level, new_power) VALUES (1, 200, 2, 20)");
+        db.execSQL("INSERT INTO weapon_upgrades (weapon_id, cost, new_level, new_power) VALUES (1, 10000, 2, 20)");
         db.execSQL("INSERT INTO weapon_upgrades (weapon_id, cost, new_level, new_power) VALUES (1, 300, 3, 30)");
     }
 

@@ -5,142 +5,12 @@
     tools:context=".MainActivity">
 
     <!-- Background Image -->
-
-    <!-- Monster Health Bar -->
     <ImageView
         android:id="@+id/background"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="fitXY"
         android:src="@drawable/background" />
-
-    <ProgressBar
-        android:id="@+id/monsterHealthBar"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="40dp"
-        android:layout_marginEnd="40dp"
-        android:max="100"
-        android:progress="100"
-        android:progressTint="@color/progress_bar_color" />
-
-    <!-- Stats Container -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/monsterHealthBar"
-        android:layout_marginTop="20dp"
-        android:orientation="horizontal"
-        android:gravity="center_horizontal">
-
-        <!-- Coin Icon and Text View -->
-        <ImageView
-            android:id="@+id/coinIcon"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:src="@drawable/coin" />
-
-        <TextView
-            android:id="@+id/coinTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="0"
-            android:textSize="18sp"
-            android:textColor="#000"
-            android:layout_marginStart="8dp"
-            android:fontFamily="@font/pixelated_font" />
-
-        <!-- Spacer -->
-        <View
-            android:layout_width="32dp"
-            android:layout_height="32dp" />
-
-        <!-- Hunger Icon and Text View -->
-        <ImageView
-            android:id="@+id/hungerIcon"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:src="@drawable/hunger" />
-
-        <TextView
-            android:id="@+id/hungerTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="100"
-            android:textSize="18sp"
-            android:textColor="#000"
-            android:layout_marginStart="8dp"
-            android:fontFamily="@font/pixelated_font" />
-
-        <!-- Spacer -->
-        <View
-            android:layout_width="32dp"
-            android:layout_height="32dp" />
-
-        <!-- Thirst Icon and Text View -->
-        <ImageView
-            android:id="@+id/thirstIcon"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:src="@drawable/thirst" />
-
-        <TextView
-            android:id="@+id/thirstTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="100"
-            android:textSize="18sp"
-            android:textColor="#000"
-            android:layout_marginStart="8dp"
-            android:fontFamily="@font/pixelated_font" />
-
-        <!-- Damage Indicator Image -->
-        <ImageView
-            android:id="@+id/damageIndicatorImageView"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:src="@drawable/weapon"
-            android:layout_marginStart="8dp" />
-
-        <!-- Damage Indicator Text -->
-        <TextView
-            android:id="@+id/damageIndicatorTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="0"
-            android:textSize="18sp"
-            android:textColor="#000"
-            android:layout_marginStart="8dp"
-            android:fontFamily="@font/pixelated_font" />
-    </LinearLayout>
-
-
-    <!-- Attack Indicator -->
-    <TextView
-        android:id="@+id/attackIndicatorTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Attack Weakened!"
-        android:textSize="18sp"
-        android:textColor="#FF0000"
-        android:layout_below="@id/monsterHealthBar"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="60dp"
-        android:visibility="invisible"
-        android:fontFamily="@font/pixelated_font" />
-
-    <!-- Monster Image -->
-    <ImageView
-        android:id="@+id/monsterImage"
-        android:layout_width="339dp"
-        android:layout_height="380dp"
-        android:layout_below="@id/attackIndicatorTextView"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="200dp"
-        android:src="@drawable/monster1" />
-
 
     <!-- Shop Button -->
     <ImageView
@@ -149,7 +19,190 @@
         android:layout_height="100dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="20dp"
         android:layout_marginEnd="16dp"
         android:src="@drawable/shopbutton" />
+
+    <!-- Stats Container -->
+    <LinearLayout
+        android:id="@+id/statsContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="20dp"
+        android:orientation="vertical"
+        android:gravity="start">
+
+        <!-- Coin Icon and Text View -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:id="@+id/coinIcon"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/coin" />
+
+            <TextView
+                android:id="@+id/coinTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:textSize="22sp"
+                android:textColor="#f1f1f1f1"
+                android:layout_marginStart="8dp"
+                android:fontFamily="@font/pixelated_font"
+                android:shadowColor="#000000"
+                android:shadowDx="1"
+                android:shadowDy="1"
+                android:shadowRadius="2" />
+        </LinearLayout>
+
+        <!-- Hunger Icon and Text View -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:id="@+id/hungerIcon"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/hunger" />
+
+            <TextView
+                android:id="@+id/hungerTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="100"
+                android:textSize="22sp"
+                android:textColor="#f1f1f1f1"
+                android:layout_marginStart="8dp"
+                android:fontFamily="@font/pixelated_font"
+                android:shadowColor="#000000"
+                android:shadowDx="1"
+                android:shadowDy="1"
+                android:shadowRadius="2" />
+        </LinearLayout>
+
+        <!-- Thirst Icon and Text View -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:id="@+id/thirstIcon"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/thirst" />
+
+            <TextView
+                android:id="@+id/thirstTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="100"
+                android:textSize="22sp"
+                android:textColor="#f1f1f1f1"
+                android:layout_marginStart="8dp"
+                android:fontFamily="@font/pixelated_font"
+                android:shadowColor="#000000"
+                android:shadowDx="1"
+                android:shadowDy="1"
+                android:shadowRadius="2" />
+        </LinearLayout>
+
+        <!-- Damage Indicator Image -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:id="@+id/damageIndicatorImageView"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/weapon"
+                android:layout_marginStart="8dp" />
+
+            <TextView
+                android:id="@+id/damageIndicatorTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:textSize="22sp"
+                android:textColor="#f1f1f1f1"
+                android:layout_marginStart="8dp"
+                android:fontFamily="@font/pixelated_font"
+                android:shadowColor="#000000"
+                android:shadowDx="1"
+                android:shadowDy="1"
+                android:shadowRadius="2" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Attack Indicator -->
+    <TextView
+        android:id="@+id/attackIndicatorTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Attack Weakened!"
+        android:textSize="24sp"
+        android:textColor="#FF0000"
+        android:layout_below="@id/statsContainer"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:visibility="invisible"
+        android:fontFamily="@font/pixelated_font"
+        android:shadowColor="#000000"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="2" />
+
+    <!-- Monster Image -->
+    <ImageView
+        android:id="@+id/monsterImage"
+        android:layout_width="339dp"
+        android:layout_height="380dp"
+        android:layout_below="@id/attackIndicatorTextView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="100dp"
+        android:src="@drawable/monster1" />
+
+    <!-- Monster Health Bar -->
+    <ProgressBar
+        android:id="@+id/monsterHealthBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/monsterImage"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="40dp"
+        android:layout_marginTop="20dp"
+        android:max="100"
+        android:progress="100"
+        android:progressTint="@color/progress_bar_color" />
+
+    <ImageView
+        android:id="@+id/particleImageView"
+        android:layout_width="500dp"
+        android:layout_height="500dp"
+        android:src="@drawable/blood"
+        android:visibility="invisible"
+        android:layout_centerInParent="true" />
+
+    <!-- Video View -->
+    <VideoView
+        android:id="@+id/introVideoView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
 </RelativeLayout>
