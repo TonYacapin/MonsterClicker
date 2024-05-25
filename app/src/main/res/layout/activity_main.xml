@@ -154,7 +154,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Attack Weakened!"
-        android:textSize="24sp"
+        android:textSize="16sp"
         android:textColor="#FF0000"
         android:layout_below="@id/statsContainer"
         android:layout_centerHorizontal="true"
@@ -165,6 +165,7 @@
         android:shadowDx="1"
         android:shadowDy="1"
         android:shadowRadius="2" />
+
 
     <!-- Monster Image -->
     <ImageView
