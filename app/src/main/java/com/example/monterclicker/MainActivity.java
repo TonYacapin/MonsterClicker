@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private MediaPlayer bgMediaPlayer;
     private MediaPlayer dieMediaPlayer;
     private int baseMonsterHealth = 50;
-    private int baseMonsterCoins = 15;
+    private int baseMonsterCoins = 100;
     private int weaponDamage = 10;
     private Random random = new Random();
 
@@ -226,7 +226,7 @@ public class MainActivity extends AppCompatActivity {
         int healthVariance = random.nextInt(21) - 10;
         int userDamage = dbHelper.getUserDamage();
         if (currentMonster >= 10) {
-            return (int) ((baseMonsterHealth + (currentMonster * 200)) * Math.pow(1.5, currentMonster) + (userDamage * 3)) + healthVariance;
+            return (int) ((baseMonsterHealth + (currentMonster * 155)) * Math.pow(1.2, currentMonster) + (userDamage * 1.5)) + healthVariance;
         } else {
             return (int) ((baseMonsterHealth + (currentMonster * 50)) * Math.pow(1.2, currentMonster) + (userDamage * 1.5)) + healthVariance;
         }
