@@ -34,9 +34,10 @@ public class MainActivity extends AppCompatActivity {
     private SQLiteDatabase db;
     private MediaPlayer bgMediaPlayer;
     private MediaPlayer dieMediaPlayer;
-    private int baseMonsterHealth = 100;
-    private int baseMonsterCoins = 10;
+    private int baseMonsterHealth = 50;
+    private int baseMonsterCoins = 15;
     private int weaponDamage = 10;
+    private Random random = new Random();
 
     private boolean isShopActivityVisible = false;
 
@@ -57,6 +58,8 @@ public class MainActivity extends AppCompatActivity {
 
         ImageView shopButton = findViewById(R.id.shopButton);
 
+        findViewById(R.id.background).setBackgroundResource(R.drawable.background);
+
         Typeface pixelFont = ResourcesCompat.getFont(this, R.font.pixelated_font);
         coinTextView.setTypeface(pixelFont);
         hungerTextView.setTypeface(pixelFont);
@@ -69,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
         loadGame();
         updateMonsterStats();
         updateHungerThirst();
-        initializeDamageIndicator();  // Initialize the damage indicator
+        initializeDamageIndicator();
 
         bgMediaPlayer = MediaPlayer.create(this, R.raw.bgmusic);
         bgMediaPlayer.setLooping(true);
@@ -83,20 +86,25 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 monsterImage.startAnimation(shrinkAnimation);
-                int damage = dbHelper.getUserDamage(); // Get damage from user
+                int damage = dbHelper.getUserDamage();
                 if (hunger == 0 || thirst == 0) {
-                    damage /= 2; // Halve the damage if hunger or thirst is zero
+                    damage /= 2;
                 }
-                monsterHealth -= damage;
-                addCoins(10);
+
+                int damageResistance = random.nextInt(5) + 1;
+                monsterHealth -= (damage / damageResistance);
+
                 if (monsterHealth <= 0) {
-                    // Animate particle ImageView
                     ImageView particleImageView = findViewById(R.id.particleImageView);
                     particleImageView.setVisibility(View.VISIBLE);
                     Animation particleAnimation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.particle_anim);
                     particleImageView.startAnimation(particleAnimation);
                     playMonsterDieSound();
-                    handleProgression(); // Handle progression when monster is defeated
+                    int coinsToAdd = calculateMonsterCoins();
+                    addCoins(coinsToAdd);
+                    handleProgression();
+                } else {
+                    addCoins(1);
                 }
                 updateMonsterHealthBar();
                 updateHungerThirst();
@@ -179,30 +187,66 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void spawnNextMonster() {
-        Random random = new Random();
-        currentMonster = random.nextInt(13) + 1; // Randomize the monster from 1 to 13
+        int userDamage = dbHelper.getUserDamage();
+        int randomNumber = random.nextInt(100); // Generate a random number between 0 and 99
+
+        if (userDamage < 40) {
+            // Only spawn non-boss monsters if damage is less than 100
+            currentMonster = random.nextInt(9) + 1; // Generates a number between 1 and 9
+        } else if (randomNumber < 70) {
+            // Spawn a regular monster 70% of the time if damage is 100 or more
+            currentMonster = random.nextInt(9) + 1; // Generates a number between 1 and 9
+        } else {
+            // Spawn a boss monster 30% of the time if damage is 100 or more
+            currentMonster = random.nextInt(4) + 10; // Generates a number between 10 and 13 (boss monsters)
+        }
+
         int monsterResId = getResources().getIdentifier("monster" + currentMonster, "drawable", getPackageName());
         monsterImage.setImageResource(monsterResId);
+
+        // Update background if it's a boss level
+        if (currentMonster >= 10) {
+            findViewById(R.id.background).setBackgroundResource(R.drawable.backgroundboss);
+        } else {
+            findViewById(R.id.background).setBackgroundResource(R.drawable.background);
+        }
+
         updateMonsterStats();
     }
 
+
+
+
+//    private int calculateMonsterHealth() {
+//        // Set a fixed low health value for testing purposes
+//        return 1;
+//    }
+
     private int calculateMonsterHealth() {
+        int healthVariance = random.nextInt(21) - 10;
+        int userDamage = dbHelper.getUserDamage();
         if (currentMonster >= 10) {
-            // Boss monsters
-            return (int) ((baseMonsterHealth + (currentMonster * 100)) * Math.pow(1.3, currentMonster) + (weaponDamage * 20));
+            return (int) ((baseMonsterHealth + (currentMonster * 200)) * Math.pow(1.5, currentMonster) + (userDamage * 3)) + healthVariance;
         } else {
-            return (int) ((baseMonsterHealth + (currentMonster * 50)) * Math.pow(1.1, currentMonster) + (weaponDamage * 10));
+            return (int) ((baseMonsterHealth + (currentMonster * 50)) * Math.pow(1.2, currentMonster) + (userDamage * 1.5)) + healthVariance;
         }
+    }
+    private int calculateMonsterCoins() {
+        int userDamage = dbHelper.getUserDamage();
+        int coinVariance = random.nextInt(11) - 5;
+        int maxCoins = 99999; // Maximum allowed coins
+
+        int baseCoins;
+        if (currentMonster >= 10) {
+            baseCoins = baseMonsterCoins * userDamage * 5; // Base coins on user damage for boss-level monsters
+        } else {
+            baseCoins = baseMonsterCoins * currentMonster * 3;
+        }
+
+        int coins = baseCoins + coinVariance;
+        return Math.min(coins, maxCoins);
     }
 
-    private int calculateMonsterCoins() {
-        if (currentMonster >= 10) {
-            // Boss monsters
-            return baseMonsterCoins * currentMonster * 3;
-        } else {
-            return baseMonsterCoins * currentMonster;
-        }
-    }
 
     private void loadGame() {
         Cursor cursor = db.rawQuery("SELECT coins, hunger, thirst FROM user WHERE id = 1", null);
@@ -217,16 +261,25 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void addCoins(int baseAmount) {
-        int finalAmount = baseAmount;
-        if (hunger == 0 || thirst == 0) {
-            finalAmount = baseAmount / 100; // Earn 100 times less gold when hunger or thirst is zero
+        double multiplier = 1.0;
+        if (hunger > 0 && thirst > 0) {
+            multiplier = 3.0;
+        } else if (hunger > 0 || thirst > 0) {
+            multiplier = 2.0;
         }
+
+        int userDamage = dbHelper.getUserDamage();
+        int finalAmount = (int) (baseAmount * multiplier * (userDamage / 10.0)); // Base coins on user damage
         coins += finalAmount;
-        coins += calculateMonsterCoins();
+
+        // Ensure that coins don't exceed the maximum value
+        int maxCoins = 99999999; // Define your maximum allowed coins
+        coins = Math.min(coins, maxCoins);
+
+        updateCoinText();
         ContentValues values = new ContentValues();
         values.put("coins", coins);
         db.update("user", values, "id = 1", null);
-        updateCoinText();
     }
 
     private void updateCoinText() {
@@ -234,15 +287,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateMonsterHealthBar() {
-        monsterHealthBar.setMax(calculateMonsterHealth()); // Set the maximum value of the health bar
-        monsterHealthBar.setProgress(monsterHealth); // Set the current progress of the health bar
+        monsterHealthBar.setMax(calculateMonsterHealth());
+        monsterHealthBar.setProgress(monsterHealth);
     }
 
     private void updateHungerThirst() {
-        hunger -= 1;
-        thirst -= 1;
-        if (hunger <= 0) hunger = 0;
-        if (thirst <= 0) thirst = 0;
+        hunger -= random.nextInt(3);
+        thirst -= random.nextInt(3);
+        hunger = Math.max(0, hunger);
+        thirst = Math.max(0, thirst);
         hungerTextView.setText(String.valueOf(hunger));
         thirstTextView.setText(String.valueOf(thirst));
 
@@ -265,3 +318,4 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 }
+

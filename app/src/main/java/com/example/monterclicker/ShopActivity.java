@@ -72,7 +72,7 @@ public class ShopActivity extends AppCompatActivity {
             hunger = cursor.getInt(cursor.getColumnIndexOrThrow("hunger"));
             thirst = cursor.getInt(cursor.getColumnIndexOrThrow("thirst"));
             damage = cursor.getInt(cursor.getColumnIndexOrThrow("damage"));
-            coinTextView.setText("Coins: " + userCoins);
+            coinTextView.setText("Gold: " + userCoins);
             hungerTextView.setText("Hunger: " + hunger);
             thirstTextView.setText("Thirst: " + thirst);
             damageIndicatorTextView.setText("Damage: " + damage);
@@ -88,11 +88,20 @@ public class ShopActivity extends AppCompatActivity {
             String itemName = cursor.getString(cursor.getColumnIndexOrThrow("name"));
             int itemCost = cursor.getInt(cursor.getColumnIndexOrThrow("cost"));
 
-            // Create description based on item name
+            // If the item is a sword and its cost needs to be updated based on user damage
+            if (itemName.equals("Sword")) {
+                // Get the current user damage
+                int userDamage = dbHelper.getUserDamage();
 
-            // Append description to item name
+                // Calculate the new cost based on user damage
+                // Example: Increase the cost by 100 gold for every 10 points of user damage
+                itemCost += (userDamage / 10) * 5000;
+            }
+
+            // Create description based on item name
             String itemDetails = itemName + " - " + itemCost + " gold";
 
+            // Append description to item name
             shopItemList.add(itemDetails);
         }
         cursor.close();
@@ -123,6 +132,7 @@ public class ShopActivity extends AppCompatActivity {
             // Update user data in the database and UI
             updateUserData(userCoins, hunger, thirst, damage);
             loadUserData(); // Refresh user data after updating hunger, thirst, or coins
+            loadShopItems(); // Refresh shop items after purchase
 
             // Display a toast message to indicate successful purchase
 

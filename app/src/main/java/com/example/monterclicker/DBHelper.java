@@ -47,12 +47,12 @@ public class DBHelper extends SQLiteOpenHelper {
                 "new_power INTEGER)");
 
         // Insert initial data into user table
-        db.execSQL("INSERT INTO user (id, coins, hunger, thirst, damage) VALUES (1, 0, 100, 100, 10)");
+        db.execSQL("INSERT INTO user (id, coins, hunger, thirst, damage) VALUES (1, 0, 100, 100, 20)");
 
         // Insert initial data into items table
         db.execSQL("INSERT INTO items (name, cost, type) VALUES ('Sword', 10000, 'weapon_upgrade')");;
-        db.execSQL("INSERT INTO items (name, cost, type) VALUES ('Food', 50, 'food')");
-        db.execSQL("INSERT INTO items (name, cost, type) VALUES ('Water', 30, 'water')");
+        db.execSQL("INSERT INTO items (name, cost, type) VALUES ('Food', 40, 'food')");
+        db.execSQL("INSERT INTO items (name, cost, type) VALUES ('Water', 20, 'water')");
 
         // Insert initial data into weapons table
         db.execSQL("INSERT INTO weapons (id, level, power) VALUES (1, 1, 10)");
