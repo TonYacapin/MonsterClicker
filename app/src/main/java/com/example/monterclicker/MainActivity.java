@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Typeface;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -26,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView thirstTextView;
     private TextView attackIndicatorTextView;
     private TextView damageIndicatorTextView;
+    private TextView eventTextView;
     private int monsterHealth;
     private int currentMonster = 1;
     private int coins;
@@ -55,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
         thirstTextView = findViewById(R.id.thirstTextView);
         attackIndicatorTextView = findViewById(R.id.attackIndicatorTextView);
         damageIndicatorTextView = findViewById(R.id.damageIndicatorTextView);
+        eventTextView = findViewById(R.id.eventTextView); // New TextView for random events
 
         ImageView shopButton = findViewById(R.id.shopButton);
 
@@ -66,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
         thirstTextView.setTypeface(pixelFont);
         attackIndicatorTextView.setTypeface(pixelFont);
         damageIndicatorTextView.setTypeface(pixelFont);
+        eventTextView.setTypeface(pixelFont); // Set typeface for the new event TextView
 
         db = dbHelper.getWritableDatabase();
 
@@ -128,8 +132,22 @@ public class MainActivity extends AppCompatActivity {
                 updateHungerThirst();
                 updateAttackIndicator();
 
+                // Check for random events
+                int randomEventChance = random.nextInt(100);
+                if (randomEventChance < 1) { // 5% chance for an event
+                    if (monsterHealth <= 0.2 * calculateMonsterHealth()) { // Check if monster health is below 30%
+                        randomEvent(); // Trigger "Monster Escape" event
+                    } else {
+                        // Handle other random events here
+                    }
+                }
+
+                // Check if hunger or thirst penalties apply
+                checkHungerThirstPenalties();
             }
         });
+
+
 
         shopButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -322,6 +340,44 @@ public class MainActivity extends AppCompatActivity {
             attackIndicatorTextView.setVisibility(View.VISIBLE);
         } else {
             attackIndicatorTextView.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    // Random Event: Monster Escape Penalty
+    private void randomEvent() {
+        eventTextView.setText("Monster escaped!");
+        eventTextView.setVisibility(View.VISIBLE);
+
+        // Delay the visibility change to invisible after 2000 milliseconds (2 seconds)
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                eventTextView.setVisibility(View.INVISIBLE);
+            }
+        }, 5000);
+
+        // Replace the current monster with a new one
+        spawnNextMonster();
+    }
+    // Check if hunger or thirst penalties apply
+    private void checkHungerThirstPenalties() {
+        if (hunger == 0 || thirst == 0) {
+            int penalty = random.nextInt(50) + 1; // Random penalty between 1 and 50 coins
+            coins -= penalty;
+            if (coins < 0) {
+                coins = 0; // Ensure coins don't go negative
+            }
+            updateCoinText();
+            eventTextView.setText("Hunger or thirst depleted! You lost " + penalty + " coins.");
+            eventTextView.setVisibility(View.VISIBLE);
+
+            // Delay the visibility change to invisible after 2000 milliseconds (2 seconds)
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    eventTextView.setVisibility(View.INVISIBLE);
+                }
+            }, 5000);
         }
     }
 }
