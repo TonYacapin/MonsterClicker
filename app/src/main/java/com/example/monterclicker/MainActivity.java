@@ -87,8 +87,26 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 monsterImage.startAnimation(shrinkAnimation);
                 int damage = dbHelper.getUserDamage();
+                boolean canCrit = hunger > 0 && thirst > 0;
                 if (hunger == 0 || thirst == 0) {
                     damage /= 2;
+                }
+
+                // Critical strike chance
+                if (canCrit) {
+                    boolean isCritical = random.nextInt(100) < 10; // 10% chance for a critical hit
+                    if (isCritical) {
+                        damage *= 5;
+                        damageIndicatorTextView.setText("Critical Hit! " + damage);
+                        ImageView particleImageView = findViewById(R.id.particleImageView);
+                        particleImageView.setVisibility(View.VISIBLE);
+                        Animation particleAnimation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.particle_anim);
+                        particleImageView.startAnimation(particleAnimation);
+                    } else {
+                        damageIndicatorTextView.setText(String.valueOf(damage));
+                    }
+                } else {
+                    damageIndicatorTextView.setText(String.valueOf(damage));
                 }
 
                 int damageResistance = random.nextInt(5) + 1;
@@ -109,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
                 updateMonsterHealthBar();
                 updateHungerThirst();
                 updateAttackIndicator();
-                updateDamageIndicator(damage);
+
             }
         });
 
@@ -190,14 +208,11 @@ public class MainActivity extends AppCompatActivity {
         int userDamage = dbHelper.getUserDamage();
         int randomNumber = random.nextInt(100); // Generate a random number between 0 and 99
 
-        if (userDamage < 40) {
-            // Only spawn non-boss monsters if damage is less than 100
-            currentMonster = random.nextInt(9) + 1; // Generates a number between 1 and 9
-        } else if (randomNumber < 70) {
-            // Spawn a regular monster 70% of the time if damage is 100 or more
+        if (randomNumber < 95) {
+            // Spawn a regular monster 99% of the time
             currentMonster = random.nextInt(9) + 1; // Generates a number between 1 and 9
         } else {
-            // Spawn a boss monster 30% of the time if damage is 100 or more
+            // Spawn a boss monster 1% of the time
             currentMonster = random.nextInt(4) + 10; // Generates a number between 10 and 13 (boss monsters)
         }
 
@@ -214,14 +229,6 @@ public class MainActivity extends AppCompatActivity {
         updateMonsterStats();
     }
 
-
-
-
-//    private int calculateMonsterHealth() {
-//        // Set a fixed low health value for testing purposes
-//        return 1;
-//    }
-
     private int calculateMonsterHealth() {
         int healthVariance = random.nextInt(21) - 10;
         int userDamage = dbHelper.getUserDamage();
@@ -231,14 +238,15 @@ public class MainActivity extends AppCompatActivity {
             return (int) ((baseMonsterHealth + (currentMonster * 50)) * Math.pow(1.2, currentMonster) + (userDamage * 1.5)) + healthVariance;
         }
     }
+
     private int calculateMonsterCoins() {
         int userDamage = dbHelper.getUserDamage();
         int coinVariance = random.nextInt(11) - 5;
-        int maxCoins = 99999; // Maximum allowed coins
+        int maxCoins = 1000; // Maximum allowed coins
 
         int baseCoins;
         if (currentMonster >= 10) {
-            baseCoins = baseMonsterCoins * userDamage * 5; // Base coins on user damage for boss-level monsters
+            baseCoins = baseMonsterCoins * currentMonster * 10; // Base coins on user damage for boss-level monsters
         } else {
             baseCoins = baseMonsterCoins * currentMonster * 3;
         }
@@ -246,7 +254,6 @@ public class MainActivity extends AppCompatActivity {
         int coins = baseCoins + coinVariance;
         return Math.min(coins, maxCoins);
     }
-
 
     private void loadGame() {
         Cursor cursor = db.rawQuery("SELECT coins, hunger, thirst FROM user WHERE id = 1", null);
@@ -318,4 +325,3 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 }
-
